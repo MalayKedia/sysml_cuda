@@ -25,21 +25,21 @@ __global__ void matrix_multiplication_kernel(const float* A, const float* B, flo
         int bCol = globalCol;
 
         if (aRow < M && aCol < N) {
-            tile_A[localRow * TILE_SIZE + localCol] = A[aRow * N + aCol];
+            tile_A[localRow][localCol] = A[aRow * N + aCol];
         } else {
-            tile_A[localRow * TILE_SIZE + localCol] = 0.0f;
+            tile_A[localRow][localCol] = 0.0f;
         }
 
         if (bRow < N && bCol < K) {
-            tile_B[localRow * TILE_SIZE + localCol] = B[bRow * K + bCol];
+            tile_B[localRow][localCol] = B[bRow * K + bCol];
         } else {
-            tile_B[localRow * TILE_SIZE + localCol] = 0.0f;
+            tile_B[localRow][localCol] = 0.0f;
         }
 
         __syncthreads();
     
         for (int i = 0; i < TILE_SIZE; i++) {
-            sum += tile_A[localRow * TILE_SIZE + i] * tile_B[i * TILE_SIZE + localCol];
+            sum += tile_A[localRow][i] * tile_B[i][localCol];
         }
 
         __syncthreads();
