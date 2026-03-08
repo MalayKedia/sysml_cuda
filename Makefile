@@ -5,30 +5,31 @@ NVCC_FLAGS = -arch=sm_70 -std=c++11
 SRC_DIR = src
 BIN_DIR = bin
 
-# Source files
-CUDA_SOURCES = $(wildcard $(SRC_DIR)/*.cu)
-CUDA_OBJECTS = $(patsubst $(SRC_DIR)/%.cu, $(OBJ_DIR)/%.o, $(CUDA_SOURCES))
-
 # Target executable
-# for each file in src, have a bin which is the same name as the file in src compiled with main.cc
+CUDA_SOURCES = $(wildcard $(SRC_DIR)/*.cu)
 TARGETS = $(patsubst $(SRC_DIR)/%.cu, $(BIN_DIR)/%, $(CUDA_SOURCES))
 
 # Default target
-all: $(TARGETS)
+all: $(BIN_DIR) $(TARGETS) 
 
-# Rule to compile and run CUDA source files
-$(BIN_DIR)/%: $(SRC_DIR)/%.cu main.cc
-	$(NVCC) $(NVCC_FLAGS) -o $@ $^
-	echo "Running $@..."
-	./$@ -DLARGE_TESTS
-	echo "Finished running $@.\n\n"
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
+
+# Rule to compile and run CUDA source files, should run even if the file is not modified
+$(BIN_DIR)/%: $(SRC_DIR)/%.cu main.cc force | $(BIN_DIR)
+	@$(NVCC) -DLARGE_TESTS $(NVCC_FLAGS) -o $@ $^
+	@echo "Running $@..."
+	$@
+	@echo "Finished running $@.\n\n"
 
 leetgpu:
-	leetgpu run main.cc $(FILE)
+	@leetgpu run main.cc $(FILE)
 
 # Clean target
 clean:
 	rm -f $(BIN_DIR)/*
 
-.PHONY: all clean
+force:
+
+.PHONY: all clean leetgpu force
 
