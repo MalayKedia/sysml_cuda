@@ -4,6 +4,10 @@
 #include <cmath>
 #include <chrono>
 
+#ifdef NOT_LEETGPU
+#include <cublas_v2.h>
+#endif
+
 extern "C" void matmul_gpu(const float* A, const float* B, float* C, int M, int N, int K);
 
 void cpu_matmul(const float* A, const float* B, float* C, int M, int N, int K) {
@@ -16,6 +20,35 @@ void cpu_matmul(const float* A, const float* B, float* C, int M, int N, int K) {
             C[i*K + j] = sum;
         }
     }
+}
+
+void cublas_matmul(const float* A, const float* B, float* C, int M, int N, int K) {
+    #ifdef NOT_LEETGPU
+    cublasHandle_t handle;
+    cublasCreate(&handle);
+
+    float *d_C_cublas;
+    cudaMalloc(&d_C_cublas, M*K*sizeof(float));
+
+    const float alpha = 1.0f;
+    const float beta = 0.0f;
+
+    cudaEvent_t start, stop;
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
+
+    cudaEventRecord(start);
+    cublasSgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, K, M, N, &alpha, B, K, A, N, &beta, C, K);
+    cudaEventRecord(stop);
+    cudaEventSynchronize(stop);
+    cublasDestroy(handle);
+
+    cudaFree(d_C_cublas);
+
+    float ms = 0;
+    cudaEventElapsedTime(&ms, start, stop);
+    std::cout << "cuBLAS Time: " << ms << " ms\n";
+    #endif
 }
 
 void fill_random(float* A, int size) {
@@ -79,6 +112,8 @@ void run_test(int M, int N, int K, bool verify) {
     }
 
     std::cout << "-------------------------\n";
+
+    cublas_matmul(d_A, d_B, d_C, M, N, K);
 
     cudaFree(d_A);
     cudaFree(d_B);

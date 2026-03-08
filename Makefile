@@ -1,5 +1,5 @@
 NVCC = nvcc
-NVCC_FLAGS = -arch=sm_70 -std=c++11
+NVCC_FLAGS = -arch=sm_70 -std=c++11 -lcublas
 
 # Directories
 SRC_DIR = src
@@ -17,7 +17,7 @@ $(BIN_DIR):
 
 # Rule to compile and run CUDA source files, should run even if the file is not modified
 $(BIN_DIR)/%: $(SRC_DIR)/%.cu main.cc force | $(BIN_DIR)
-	@$(NVCC) -DLARGE_TESTS $(NVCC_FLAGS) -o $@ $< main.cc
+	@$(NVCC) -DLARGE_TESTS -DNOT_LEETGPU $(NVCC_FLAGS) -o $@ $< main.cc
 	@echo "Running $@..."
 	$@
 	@echo "Finished running $@.\n\n"
