@@ -3,7 +3,7 @@
 #include <random>
 #include <cmath>
 
-extern "C" void solve(const float* A, const float* B, float* C, int M, int N, int K);
+extern "C" void matmul_gpu(const float* A, const float* B, float* C, int M, int N, int K);
 
 void cpu_matmul(const float* A, const float* B, float* C, int M, int N, int K) {
     for (int i = 0; i < M; i++) {
@@ -45,7 +45,7 @@ void run_test(int M, int N, int K, bool verify) {
     cudaEventCreate(&stop);
 
     cudaEventRecord(start);
-    solve(d_A, d_B, d_C, M, N, K);
+    matmul_gpu(d_A, d_B, d_C, M, N, K);
     cudaEventRecord(stop);
     cudaEventSynchronize(stop);
 
@@ -88,8 +88,11 @@ int main() {
     std::cout << "Test Case 1 (Correctness Check)\n";
     run_test(3, 3, 3, true);
 
-    std::cout << "Test Case 2 (Scaling Test)\n";
+    std::cout << "Test Case 2 (Small Scaling)\n";
     run_test(150, 250, 200, false);
+
+    std::cout << "Test Case 3 (Real Scaling Test)\n";
+    run_test(1024, 1024, 1024, false);
 
     return 0;
 }
