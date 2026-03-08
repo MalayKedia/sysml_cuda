@@ -17,7 +17,7 @@ $(BIN_DIR):
 
 # Rule to compile and run CUDA source files, should run even if the file is not modified
 $(BIN_DIR)/%: $(SRC_DIR)/%.cu main.cc force | $(BIN_DIR)
-	@$(NVCC) -DLARGE_TESTS $(NVCC_FLAGS) -o $@ $^
+	@$(NVCC) -DLARGE_TESTS $(NVCC_FLAGS) -o $@ $< main.cc
 	@echo "Running $@..."
 	$@
 	@echo "Finished running $@.\n\n"
