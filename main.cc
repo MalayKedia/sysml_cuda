@@ -2,6 +2,7 @@
 #include <cuda_runtime.h>
 #include <random>
 #include <cmath>
+#include <chrono>
 
 extern "C" void matmul_gpu(const float* A, const float* B, float* C, int M, int N, int K);
 
@@ -58,7 +59,13 @@ void run_test(int M, int N, int K, bool verify) {
     std::cout << "GPU Time: " << ms << " ms\n";
 
     if (verify) {
+        auto cpu_start = std::chrono::high_resolution_clock::now();
+
         cpu_matmul(h_A, h_B, h_ref, M, N, K);
+
+        auto cpu_end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, std::milli> cpu_duration = cpu_end - cpu_start;
+        std::cout << "CPU Time: " << cpu_duration.count() << " ms\n";
 
         bool ok = true;
         for (int i = 0; i < M*K; i++) {
@@ -88,11 +95,19 @@ int main() {
     std::cout << "Test Case 1 (Correctness Check)\n";
     run_test(3, 3, 3, true);
 
-    std::cout << "Test Case 2 (Small Scaling)\n";
-    run_test(150, 250, 200, false);
+    std::cout << "Test Case 2 (150 by 200)\n";
+    run_test(150, 250, 200, true);
 
-    std::cout << "Test Case 3 (Real Scaling Test)\n";
-    run_test(1024, 1024, 1024, false);
+    #ifdef LARGE_TESTS
+    std::cout << "Test Case 3 (1024 by 1024)\n";
+    run_test(1024, 1024, 1024, true);
+
+    std::cout << "Test Case 4 (2048 by 2048)\n";
+    run_test(2048, 2048, 2048, false);
+
+    std::cout << "Test Case 5 (4096 by 4096)\n";
+    run_test(4096, 4096, 4096, false);
+    #endif
 
     return 0;
 }

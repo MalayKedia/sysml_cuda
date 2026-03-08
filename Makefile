@@ -20,7 +20,8 @@ all: $(TARGETS)
 $(BIN_DIR)/%: $(SRC_DIR)/%.cu main.cc
 	$(NVCC) $(NVCC_FLAGS) -o $@ $^
 	echo "Running $@..."
-	./$@
+	./$@ LARGE_TESTS=1
+	echo "Finished running $@.\n\n"
 
 leetgpu:
 	leetgpu run main.cc $(FILE)
