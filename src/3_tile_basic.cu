@@ -3,11 +3,10 @@
 // Every thread in a block loads one element each of A and B, and computes one element of C. This simple way of tiling has already been discussed in class. 
 
 #define TILE_SIZE 32
-__shared__ float shared_mem[TILE_SIZE*TILE_SIZE*2];
 
 __global__ void matrix_multiplication_kernel(const float* A, const float* B, float* C, int M, int N, int K) {
-    float* tile_A = shared_mem;
-    float* tile_B = shared_mem + TILE_SIZE * TILE_SIZE; 
+    __shared__ float tile_A[TILE_SIZE][TILE_SIZE];
+    __shared__ float tile_B[TILE_SIZE][TILE_SIZE];
     
     int globalCol = blockIdx.x * blockDim.x + threadIdx.x;
     int globalRow = blockIdx.y * blockDim.y + threadIdx.y;
@@ -53,7 +52,7 @@ __global__ void matrix_multiplication_kernel(const float* A, const float* B, flo
 
 // A, B, C are device pointers (i.e. pointers to memory on the GPU)
 extern "C" void matmul_gpu(const float* A, const float* B, float* C, int M, int N, int K) {
-    dim3 threadsPerBlock(32, 32);
+    dim3 threadsPerBlock(TILE_SIZE, TILE_SIZE);
     dim3 blocksPerGrid((K + threadsPerBlock.x - 1) / threadsPerBlock.x,
                        (M + threadsPerBlock.y - 1) / threadsPerBlock.y);
 
