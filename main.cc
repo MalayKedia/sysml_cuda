@@ -111,9 +111,9 @@ void run_test(int M, int N, int K, bool verify) {
         std::cout << "Verification: " << (ok ? "PASSED" : "FAILED") << "\n";
     }
 
-    std::cout << "-------------------------\n";
-
     cublas_matmul(d_A, d_B, d_C, M, N, K);
+    
+    std::cout << "-------------------------\n";
 
     cudaFree(d_A);
     cudaFree(d_B);
