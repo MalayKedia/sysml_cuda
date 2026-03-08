@@ -16,9 +16,11 @@ TARGETS = $(patsubst $(SRC_DIR)/%.cu, $(BIN_DIR)/%, $(CUDA_SOURCES))
 # Default target
 all: $(TARGETS)
 
-# Rule to compile CUDA source files
+# Rule to compile and run CUDA source files
 $(BIN_DIR)/%: $(SRC_DIR)/%.cu main.cc
 	$(NVCC) $(NVCC_FLAGS) -o $@ $^
+	echo "Running $@..."
+	./$@
 
 leetgpu:
 	leetgpu run main.cc $(FILE)
