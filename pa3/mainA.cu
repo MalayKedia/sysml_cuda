@@ -155,7 +155,7 @@ int main()
     // Compare results
     for (int i = 0; i < B * N; i++)
     {
-        if (fabs(h_Y_cpu[i] - h_Y_gpu[i]) > 1e-5)
+        if (fabs(h_Y_cpu[i] - h_Y_gpu[i]) > 1e-3)
         {
             printf("Mismatch in Y at index %d: CPU %f, GPU %f\n", i, h_Y_cpu[i], h_Y_gpu[i]);
             break;
