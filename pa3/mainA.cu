@@ -86,7 +86,7 @@ int main()
 {
     int N = 1024;
     int B = 64;
-    int BLOCK_SIZE = 16;
+    int BLOCK_SIZE = 8;
 
     size_t X_size = B * N * sizeof(float);
     size_t W_size = N * N * sizeof(float);

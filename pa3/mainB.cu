@@ -91,8 +91,8 @@ int main()
 {
     int N = 1024;
     int B = 64;
-    int BLOCK_SIZE = 16;
-    int STREAMS = 4;
+    int BLOCK_SIZE = 8;
+    int STREAMS = 8;
     assert(B%STREAMS == 0);
 
     size_t X_size = B * N * sizeof(float);
