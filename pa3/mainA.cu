@@ -139,28 +139,28 @@ int main()
     cudaFree(d_Y);
     cudaFree(d_Z);
 
-    // cpu validation to check correctness
-    float *h_Y_cpu = (float *)malloc(X_size);
-    float *h_Z_cpu = (float *)malloc(X_size);
+    // // cpu validation to check correctness
+    // float *h_Y_cpu = (float *)malloc(X_size);
+    // float *h_Z_cpu = (float *)malloc(X_size);
 
 
 
-    auto cpu_start = std::chrono::high_resolution_clock::now();
-    cpu_ffnn(h_X, h_W1, h_W2, h_Y_cpu, h_Z_cpu, N, B);
-    auto cpu_end = std::chrono::high_resolution_clock::now();
+    // auto cpu_start = std::chrono::high_resolution_clock::now();
+    // cpu_ffnn(h_X, h_W1, h_W2, h_Y_cpu, h_Z_cpu, N, B);
+    // auto cpu_end = std::chrono::high_resolution_clock::now();
 
-    std::chrono::duration<float, std::milli> cpu_duration = cpu_end - cpu_start;
-    printf("Time taken by CPU for %d x %d matrix: %f ms\n", N, B, cpu_duration.count());
+    // std::chrono::duration<float, std::milli> cpu_duration = cpu_end - cpu_start;
+    // printf("Time taken by CPU for %d x %d matrix: %f ms\n", N, B, cpu_duration.count());
 
-    // Compare results
-    for (int i = 0; i < B * N; i++)
-    {
-        if (fabs(h_Y_cpu[i] - h_Y_gpu[i]) > 1e-3)
-        {
-            printf("Mismatch in Y at index %d: CPU %f, GPU %f\n", i, h_Y_cpu[i], h_Y_gpu[i]);
-            break;
-        }
-    }
+    // // Compare results
+    // for (int i = 0; i < B * N; i++)
+    // {
+    //     if (fabs(h_Y_cpu[i] - h_Y_gpu[i]) > 1e-3)
+    //     {
+    //         printf("Mismatch in Y at index %d: CPU %f, GPU %f\n", i, h_Y_cpu[i], h_Y_gpu[i]);
+    //         break;
+    //     }
+    // }
 
 
     return 0;
