@@ -84,9 +84,9 @@ void cpu_ffnn(float *h_X, float *h_W1, float *h_W2, float *h_Y, float *h_Z, int 
 
 int main()
 {
-    int N = 1024;
-    int B = 64;
-    int BLOCK_SIZE = 8;
+    int N = 4096;
+    int B = 1024;
+    int BLOCK_SIZE = 16;
 
     size_t X_size = B * N * sizeof(float);
     size_t W_size = N * N * sizeof(float);
